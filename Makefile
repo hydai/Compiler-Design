@@ -10,7 +10,7 @@ all:
 	${CC} lex.yy.c ${CFLAG} -o ${TARGET}.out
 
 test:
-	./${TARGET}.out < ${TESTCASE}.c
+	./${TARGET}.out < ${TESTCASE}.c > output.txt
 
 clean:
 	rm lex.yy.c *.out

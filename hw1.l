@@ -31,45 +31,48 @@ INT_VAL     -?([0]|[1-9][0-9]*)
 %%
 
 {OPERATOR}      {
-                    printf("#%d operator : %s\n", line_number, yytext);
+                    printf("#%-2d %-11s: %s\n", line_number, "operator", yytext);
                 }
 {DOUBLE_VAL}    {
-                    printf("#%d number : %s\n", line_number, yytext);
+                    printf("#%-2d %-11s: %s\n", line_number, "number", yytext);
                 }
 {INT_VAL}       {
-                    printf("#%d number : %s\n", line_number, yytext);
+                    printf("#%-2d %-11s: %s\n", line_number, "number", yytext);
                 }
 {DATA_TYPE}     {
-                    printf("#%d data type : %s\n", line_number, yytext);
+                    printf("#%-2d %-11s: %s\n", line_number, "data type", yytext);
                 }
 {RETURN}        {
-                    printf("#%d return\n", line_number);
+                    printf("#%-2d return\n", line_number);
                 }
 
 {ID}            {
-                    printf("#%d ID : %s\n", line_number, yytext);
+                    printf("#%-2d %-11s: %s\n", line_number, "ID", yytext);
                     /*
                        function ID
                        variable ID
                      */
                 }
 \(          {
-                printf("#%d (\n", line_number);
+                printf("#%-2d (\n", line_number);
             }
 \)          {
-                printf("#%d )\n", line_number);
+                printf("#%-2d )\n", line_number);
             }
-{           {
-                printf("#%d {\n", line_number);
+\{          {
+                printf("#%-2d {\n", line_number);
             }
-}           {
-                printf("#%d }\n", line_number);
+\}          {
+                printf("#%-2d }\n", line_number);
             }
 ,           {
-                printf("#%d ,\n", line_number);
+                printf("#%-2d ,\n", line_number);
+            }
+'           {
+                printf("#%-2d '\n", line_number);
             }
 ;           {
-                printf("#%d ;\n", line_number);
+                printf("#%-2d ;\n", line_number);
             }
 
 "/*"        {
@@ -78,9 +81,9 @@ INT_VAL     -?([0]|[1-9][0-9]*)
                     if(cur_ch == EOF)
                         break;
                     if(cur_ch == '\n')
-                        printf("#%d comment\n", line_number++);
+                        printf("#%-2d comment\n", line_number++);
                     if(prev_ch == '*' && cur_ch == '/') {
-                        printf("#%d comment\n", line_number);
+                        printf("#%-2d comment\n", line_number);
                         break;
                     }
                     prev_ch = cur_ch;
@@ -93,7 +96,7 @@ INT_VAL     -?([0]|[1-9][0-9]*)
                     if(cur_ch == EOF)
                         break;
                     if(cur_ch == '\n') {
-                        printf("#%d comment\n", line_number++);
+                        printf("#%-2d comment\n", line_number++);
                         break;
                     }
                     prev_ch = cur_ch;
