@@ -13,7 +13,6 @@ int main(){
   int b=1;
   double c=0;
   char d='x';
-  long long int e = 0;
 
   // statements
   a = 10/2;
