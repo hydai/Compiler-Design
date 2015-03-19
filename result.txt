@@ -1,0 +1,89 @@
+#1  comment
+#3  comment
+#4  comment
+#6  comment
+#7  data type  : int
+#7  function ID: sub
+#7  (
+#7  data type  : int
+#7  variable ID: x
+#7  ,
+#7  data type  : int
+#7  variable ID: y
+#7  )
+#7  ;
+#9  data type  : int
+#9  function ID: main
+#9  (
+#9  )
+#9  {
+#11 comment
+#12 data type  : int
+#12 variable ID: a
+#12 ;
+#13 data type  : int
+#13 variable ID: b
+#13 operator   : =
+#13 number     : 1
+#13 ;
+#14 data type  : double
+#14 variable ID: c
+#14 operator   : =
+#14 number     : 0
+#14 ;
+#15 data type  : char
+#15 variable ID: d
+#15 operator   : =
+#15 '
+#15 character  : x
+#15 '
+#15 ;
+#17 comment
+#18 variable ID: a
+#18 operator   : =
+#18 number     : 10
+#18 operator   : /
+#18 number     : 2
+#18 ;
+#19 variable ID: c
+#19 operator   : =
+#19 (
+#19 variable ID: b
+#19 operator   : +
+#19 number     : 3
+#19 )
+#19 operator   : *
+#19 number     : 4
+#19 operator   : -
+#19 number     : 5
+#19 ;
+#20 variable ID: b
+#20 operator   : =
+#20 function ID: sub
+#20 (
+#20 number     : 10
+#20 ,
+#20 number     : 8
+#20 )
+#20 ;
+#22 return
+#22 variable ID: a
+#22 ;
+#24 }
+#26 comment
+#27 data type  : int
+#27 function ID: sub
+#27 (
+#27 data type  : int
+#27 variable ID: x
+#27 ,
+#27 data type  : int
+#27 variable ID: y
+#27 )
+#27 {
+#28 return
+#28 variable ID: x
+#28 operator   : -
+#28 variable ID: y
+#28 ;
+#29 }
