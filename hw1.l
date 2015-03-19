@@ -1,5 +1,6 @@
 %{
     int line_number = 1;
+    int char_flag = 0;
 %}
 LETTER      [a-zA-Z_]
 DIGIT       [0-9]
@@ -49,6 +50,7 @@ INT_VAL     ([0]|[1-9][0-9]*)
 {ID}            {
                     printf("#%-2d %-11s: %s\n", line_number, "ID", yytext);
                     /*
+                    TODO:
                        function ID
                        variable ID
                      */
@@ -70,6 +72,13 @@ INT_VAL     ([0]|[1-9][0-9]*)
             }
 '           {
                 printf("#%-2d '\n", line_number);
+                if (char_flag == 0) {
+                    char_flag = 1;
+                    char character = input();
+                    printf("#%-2d %-11s: %c\n", line_number, "character", character);
+                } else {
+                    char_flag = 0;
+                }
             }
 ;           {
                 printf("#%-2d ;\n", line_number);
