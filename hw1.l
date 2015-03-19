@@ -25,8 +25,8 @@ FLOATING    ({FLOAT}|{DOUBLE}|{LONG}" "{DOUBLE})
 DATA_TYPE   ({INTEGER}|{FLOATING})
 OPERATOR    ({ADD}|{MINUS}|{MULTIPLY}|{DIVIDE}|{GTE}|{LTE}|{ASSIGN}|{GT}|{LT})
 RETURN      return
-DOUBLE_VAL  -?([0-9]\.[0-9]+)
-INT_VAL     -?([0]|[1-9][0-9]*)
+DOUBLE_VAL  ([0-9]\.[0-9]+)
+INT_VAL     ([0]|[1-9][0-9]*)
 
 %%
 
