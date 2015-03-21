@@ -1,7 +1,10 @@
 %{
     int line_number = 1;
     int char_flag = 0;
+    char unknownID[128];
 %}
+%Start      UNKNOWNID
+%Start      DATATYPE
 LETTER      [a-zA-Z_]
 DIGIT       [0-9]
 ID          {LETTER}({LETTER}|{DIGIT})*
@@ -31,6 +34,22 @@ INT_VAL     ([0]|[1-9][0-9]*)
 
 %%
 
+<UNKNOWNID>" "  ;
+<UNKNOWNID>"("  {
+                    printf("#%-2d %-11s: %s\n", line_number, "function ID", unknownID);
+                    printf("#%-2d (\n", line_number);
+                    BEGIN INITIAL;
+                }
+<UNKNOWNID>"="  {
+                    printf("#%-2d %-11s: %s\n", line_number, "variable ID", unknownID);
+                    printf("#%-2d %-11s: =\n", line_number, "operator");
+                    BEGIN INITIAL;
+                }
+<UNKNOWNID>.    {
+                    printf("#%-2d %-11s: %s\n", line_number, "variable ID", unknownID);
+                    unput(yytext[0]);
+                    BEGIN INITIAL;
+                }
 {OPERATOR}      {
                     printf("#%-2d %-11s: %s\n", line_number, "operator", yytext);
                 }
@@ -42,18 +61,16 @@ INT_VAL     ([0]|[1-9][0-9]*)
                 }
 {DATA_TYPE}     {
                     printf("#%-2d %-11s: %s\n", line_number, "data type", yytext);
+                    BEGIN DATATYPE;
                 }
 {RETURN}        {
                     printf("#%-2d return\n", line_number);
                 }
 
 {ID}            {
-                    printf("#%-2d %-11s: %s\n", line_number, "ID", yytext);
-                    /*
-                    TODO:
-                       function ID
-                       variable ID
-                     */
+                    strcpy(unknownID, yytext);
+                    BEGIN UNKNOWNID;
+                    //printf("#%-2d %-11s: %s\n", line_number, "variable ID", yytext);
                 }
 \(          {
                 printf("#%-2d (\n", line_number);
