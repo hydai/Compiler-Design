@@ -1,0 +1,124 @@
+#1  comment
+#3  comment
+#4  comment
+#6  comment
+#7  data type  : int
+#7  function ID: sub
+#7  (
+#7  data type  : int
+#7  variable ID: x
+#7  ,
+#7  data type  : int
+#7  variable ID: y
+#7  )
+#7  ;
+#9  data type  : int
+#9  function ID: main
+#9  (
+#9  )
+#9  {
+#11 comment
+#12 data type  : int
+#12 variable ID: a
+#12 ;
+#13 data type  : int
+#13 variable ID: b
+#13 operator   : =
+#13 number     : 1
+#13 ;
+#14 data type  : double
+#14 variable ID: c
+#14 operator   : =
+#14 number     : 0
+#14 ;
+#15 data type  : char
+#15 variable ID: d
+#15 operator   : =
+#15 '
+#15 character  : x
+#15 '
+#15 ;
+#17 comment
+#18 variable ID: a
+#18 operator   : =
+#18 number     : 10
+#18 operator   : /
+#18 number     : 2
+#18 ;
+#19 variable ID: c
+#19 operator   : =
+#19 (
+#19 variable ID: b
+#19 operator   : +
+#19 number     : 3
+#19 )
+#19 operator   : *
+#19 number     : 4
+#19 operator   : -
+#19 number     : 5
+#19 ;
+#20 variable ID: b
+#20 operator   : =
+#20 function ID: sub
+#20 (
+#20 number     : 10
+#20 ,
+#20 number     : 8
+#20 )
+#20 ;
+#21 for-loop   : for
+#21 (
+#21 data type  : int
+#21 variable ID: i
+#21 operator   : =
+#21 number     : 0
+#21 ;
+#21 variable ID: i
+#21 operator   : <=
+#21 number     : 10
+#21 ;
+#21 variable ID: i
+#21 operator   : ++
+#21 )
+#21 {
+#22 comment
+#23 }
+#24 for-loop   : for
+#24 (
+#24 data type  : int
+#24 variable ID: j
+#24 operator   : =
+#24 number     : 0
+#24 ;
+#24 variable ID: j
+#24 operator   : <=
+#24 number     : 100
+#24 ;
+#24 variable ID: j
+#24 operator   : +=
+#24 number     : 1
+#24 )
+#24 {
+#25 comment
+#26 }
+#28 return
+#28 variable ID: a
+#28 ;
+#30 }
+#32 comment
+#33 data type  : int
+#33 function ID: sub
+#33 (
+#33 data type  : int
+#33 variable ID: x
+#33 ,
+#33 data type  : int
+#33 variable ID: y
+#33 )
+#33 {
+#34 return
+#34 variable ID: x
+#34 operator   : -
+#34 variable ID: y
+#34 ;
+#35 }
