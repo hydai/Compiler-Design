@@ -1,8 +1,8 @@
 LEX=flex
 CC=gcc
 CFLAG=-lfl
-SOURCE=hw1
-TARGET=hw1
+SOURCE=101062124_hw1
+TARGET=101062124_hw1
 TESTCASE=testfile
 
 all:
@@ -11,6 +11,7 @@ all:
 
 test:
 	./${TARGET}.out < ${TESTCASE}.c > output.txt
+	vimdiff output.txt result.txt
 
 clean:
-	rm lex.yy.c *.out
+	rm lex.yy.c *.out output.txt
