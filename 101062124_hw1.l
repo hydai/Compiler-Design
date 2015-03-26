@@ -1,4 +1,5 @@
 %{
+    int i;
     int line_number = 1;
     int char_flag = 0;
     char unknownID[128];
@@ -17,6 +18,11 @@ LTE         "<="
 ASSIGN      "="
 GT          ">"
 LT          "<"
+PP          "++"
+MM          "--"
+PE          "+="
+ME          "-="
+FOR         for
 UNSIGNED    unsigned
 CHAR        char
 SHORT       short
@@ -27,7 +33,7 @@ DOUBLE      double
 INTEGER     (({UNSIGNED}" ")?(({SHORT}|{LONG}|{LONG}" "{LONG})" ")?{INT}?)
 FLOATING    ({FLOAT}|{DOUBLE}|{LONG}" "{DOUBLE})
 DATA_TYPE   ({INTEGER}|{FLOATING}|{CHAR})
-OPERATOR    ({ADD}|{MINUS}|{MULTIPLY}|{DIVIDE}|{GTE}|{LTE}|{ASSIGN}|{GT}|{LT})
+OPERATOR    ({ADD}|{MINUS}|{MULTIPLY}|{DIVIDE}|{GTE}|{LTE}|{ASSIGN}|{GT}|{LT}|{PP}|{MM}|{PE}|{ME})
 RETURN      return
 DOUBLE_VAL  ([0-9]\.[0-9]+)
 INT_VAL     ([0]|[1-9][0-9]*)
@@ -45,10 +51,19 @@ INT_VAL     ([0]|[1-9][0-9]*)
                     printf("#%-2d %-11s: =\n", line_number, "operator");
                     BEGIN INITIAL;
                 }
+<UNKNOWNID>{OPERATOR} {
+                    printf("#%-2d %-11s: %s\n", line_number, "variable ID", unknownID);
+                    printf("#%-2d %-11s: %s\n", line_number, "operator", yytext);
+                    BEGIN INITIAL;
+
+                        }
 <UNKNOWNID>.    {
                     printf("#%-2d %-11s: %s\n", line_number, "variable ID", unknownID);
                     unput(yytext[0]);
                     BEGIN INITIAL;
+                }
+{FOR}           {
+                    printf("#%-2d %-11s: %s\n", line_number, "for-loop", yytext);
                 }
 {OPERATOR}      {
                     printf("#%-2d %-11s: %s\n", line_number, "operator", yytext);
