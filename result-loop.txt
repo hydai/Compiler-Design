@@ -101,24 +101,52 @@
 #24 {
 #25 comment
 #26 }
-#28 return
+#27 while-loop : while
+#27 (
+#27 variable ID: a
+#27 operator   : >=
+#27 number     : 0
+#27 )
+#27 {
 #28 variable ID: a
+#28 operator   : --
 #28 ;
+#29 comment
 #30 }
-#32 comment
-#33 data type  : int
-#33 function ID: sub
-#33 (
-#33 data type  : int
-#33 variable ID: x
-#33 ,
-#33 data type  : int
-#33 variable ID: y
-#33 )
-#33 {
-#34 return
-#34 variable ID: x
-#34 operator   : -
-#34 variable ID: y
-#34 ;
-#35 }
+#31 while-loop : while
+#31 (
+#31 variable ID: a
+#31 operator   : >=
+#31 number     : 0
+#31 operator   : &&
+#31 variable ID: b
+#31 operator   : ==
+#31 number     : 2
+#31 )
+#31 {
+#32 variable ID: a
+#32 operator   : --
+#32 ;
+#33 comment
+#34 }
+#36 return
+#36 variable ID: a
+#36 ;
+#38 }
+#40 comment
+#41 data type  : int
+#41 function ID: sub
+#41 (
+#41 data type  : int
+#41 variable ID: x
+#41 ,
+#41 data type  : int
+#41 variable ID: y
+#41 )
+#41 {
+#42 return
+#42 variable ID: x
+#42 operator   : -
+#42 variable ID: y
+#42 ;
+#43 }

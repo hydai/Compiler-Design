@@ -24,6 +24,14 @@ int main(){
   for (int j = 0; j <= 100; j+=1) {
     // Do nothing
   }
+  while (a >= 0) {
+    a--;
+    // Do nothing
+  }
+  while (a >= 0 && b == 2) {
+    a--;
+    // Do nothing
+  }
 
   return a;
 
