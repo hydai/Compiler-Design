@@ -15,14 +15,18 @@ MULTIPLY    [\*]
 DIVIDE      [\/]
 GTE         ">="
 LTE         "<="
+EQ          "=="
 ASSIGN      "="
 GT          ">"
 LT          "<"
+AND         "&&"
+OR          "||"
 PP          "++"
 MM          "--"
 PE          "+="
 ME          "-="
 FOR         for
+WHILE       while
 UNSIGNED    unsigned
 CHAR        char
 SHORT       short
@@ -33,7 +37,7 @@ DOUBLE      double
 INTEGER     (({UNSIGNED}" ")?(({SHORT}|{LONG}|{LONG}" "{LONG})" ")?{INT}?)
 FLOATING    ({FLOAT}|{DOUBLE}|{LONG}" "{DOUBLE})
 DATA_TYPE   ({INTEGER}|{FLOATING}|{CHAR})
-OPERATOR    ({ADD}|{MINUS}|{MULTIPLY}|{DIVIDE}|{GTE}|{LTE}|{ASSIGN}|{GT}|{LT}|{PP}|{MM}|{PE}|{ME})
+OPERATOR    ({ADD}|{MINUS}|{MULTIPLY}|{DIVIDE}|{GTE}|{LTE}|{ASSIGN}|{GT}|{LT}|{PP}|{MM}|{PE}|{ME}|{AND}|{OR}|{EQ})
 RETURN      return
 DOUBLE_VAL  ([0-9]\.[0-9]+)
 INT_VAL     ([0]|[1-9][0-9]*)
@@ -41,9 +45,9 @@ INT_VAL     ([0]|[1-9][0-9]*)
 %%
 
 <UNKNOWNID>" "  ;
-<UNKNOWNID>"("  {
-                    printf("#%-2d %-11s: %s\n", line_number, "function ID", unknownID);
-                    printf("#%-2d (\n", line_number);
+<UNKNOWNID>"=="  {
+                    printf("#%-2d %-11s: %s\n", line_number, "variable ID", unknownID);
+                    printf("#%-2d %-11s: ==\n", line_number, "operator");
                     BEGIN INITIAL;
                 }
 <UNKNOWNID>"="  {
@@ -55,12 +59,19 @@ INT_VAL     ([0]|[1-9][0-9]*)
                     printf("#%-2d %-11s: %s\n", line_number, "variable ID", unknownID);
                     printf("#%-2d %-11s: %s\n", line_number, "operator", yytext);
                     BEGIN INITIAL;
-
-                        }
+                }
+<UNKNOWNID>"("  {
+                    printf("#%-2d %-11s: %s\n", line_number, "function ID", unknownID);
+                    printf("#%-2d (\n", line_number);
+                    BEGIN INITIAL;
+                }
 <UNKNOWNID>.    {
                     printf("#%-2d %-11s: %s\n", line_number, "variable ID", unknownID);
                     unput(yytext[0]);
                     BEGIN INITIAL;
+                }
+{WHILE}         {
+                    printf("#%-2d %-11s: %s\n", line_number, "while-loop", yytext);
                 }
 {FOR}           {
                     printf("#%-2d %-11s: %s\n", line_number, "for-loop", yytext);
