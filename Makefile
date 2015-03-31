@@ -4,7 +4,7 @@ CFLAG=-lfl
 SOURCE=101062124_hw1
 TARGET=101062124_hw1
 TESTCASE=testfile
-TESTCASEBONUS=testfile-loop
+TESTCASEBONUS=bonus
 
 all:
 	flex ${SOURCE}.l
@@ -16,7 +16,7 @@ test:
 
 bonus:
 	./${TARGET}.out < ${TESTCASEBONUS}.c > output.txt
-	vimdiff output.txt result-loop.txt
+	vimdiff output.txt result-bonus.txt
 
 clean:
 	rm lex.yy.c *.out output.txt
