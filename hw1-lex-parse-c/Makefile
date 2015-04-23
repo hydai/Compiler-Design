@@ -1,6 +1,6 @@
 LEX=flex
 CC=gcc
-CFLAG=-lfl
+CFLAG=-ll
 SOURCE=101062124_hw1
 TARGET=101062124_hw1
 TESTCASE=testfile
