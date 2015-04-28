@@ -46,33 +46,112 @@ INT_VAL     ([0]|[1-9][0-9]*)
 
 {WHILE}         {
                     printf("#%-2d %-11s: %s\n", line_number, "while-loop", yytext);
+                    return WHILE;
                 }
 {FOR}           {
                     printf("#%-2d %-11s: %s\n", line_number, "for-loop", yytext);
+                    return FOR;
                 }
 {ADD}           {
                     printf("#%-2d %-11s: %s\n", line_number, "operator", yytext);
                     yylval.strVal = strdup(yytext);
                     return ADD;
                 }
-{OPERATOR}      {
+{MINUS}         {
                     printf("#%-2d %-11s: %s\n", line_number, "operator", yytext);
+                    yylval.strVal = strdup(yytext);
+                    return MINUS;
                 }
-{DOUBLE_VAL}    {
-                    printf("#%-2d %-11s: %s\n", line_number, "number", yytext);
-                    yylval.douVal = atof(yytext);
-                    return NUMBER;
+{MULTIPLY}      {
+                    printf("#%-2d %-11s: %s\n", line_number, "operator", yytext);
+                    yylval.strVal = strdup(yytext);
+                    return MULTIPLY;
+                }
+{DIVIDE}        {
+                    printf("#%-2d %-11s: %s\n", line_number, "operator", yytext);
+                    yylval.strVal = strdup(yytext);
+                    return DIVIDE;
+                }
+{GTE}           {
+                    printf("#%-2d %-11s: %s\n", line_number, "operator", yytext);
+                    yylval.strVal = strdup(yytext);
+                    return GTE;
+                }
+{LTE}           {
+                    printf("#%-2d %-11s: %s\n", line_number, "operator", yytext);
+                    yylval.strVal = strdup(yytext);
+                    return LTE;
+                }
+{ASSIGN}        {
+                    printf("#%-2d %-11s: %s\n", line_number, "operator", yytext);
+                    yylval.strVal = strdup(yytext);
+                    return ASSIGN;
+                }
+{GT}            {
+                    printf("#%-2d %-11s: %s\n", line_number, "operator", yytext);
+                    yylval.strVal = strdup(yytext);
+                    return GT;
+                }
+{LT}            {
+                    printf("#%-2d %-11s: %s\n", line_number, "operator", yytext);
+                    yylval.strVal = strdup(yytext);
+                    return LT;
+                }
+{PP}            {
+                    printf("#%-2d %-11s: %s\n", line_number, "operator", yytext);
+                    yylval.strVal = strdup(yytext);
+                    return PP;
+                }
+{MM}            {
+                    printf("#%-2d %-11s: %s\n", line_number, "operator", yytext);
+                    yylval.strVal = strdup(yytext);
+                    return MM;
+                }
+{PE}            {
+                    printf("#%-2d %-11s: %s\n", line_number, "operator", yytext);
+                    yylval.strVal = strdup(yytext);
+                    return PE;
+                }
+{ME}            {
+                    printf("#%-2d %-11s: %s\n", line_number, "operator", yytext);
+                    yylval.strVal = strdup(yytext);
+                    return ME;
+                }
+{AND}           {
+                    printf("#%-2d %-11s: %s\n", line_number, "operator", yytext);
+                    yylval.strVal = strdup(yytext);
+                    return AND;
+                }
+{OR}            {
+                    printf("#%-2d %-11s: %s\n", line_number, "operator", yytext);
+                    yylval.strVal = strdup(yytext);
+                    return OR;
+                }
+{EQ}            {
+                    printf("#%-2d %-11s: %s\n", line_number, "operator", yytext);
+                    yylval.strVal = strdup(yytext);
+                    return EQ;
                 }
 {INT_VAL}       {
                     printf("#%-2d %-11s: %s\n", line_number, "number", yytext);
                     yylval.intVal = atoi(yytext);
                     return NUMBER;
                 }
-{DATA_TYPE}     {
+{INT}           {
                     printf("#%-2d %-11s: %s\n", line_number, "data type", yytext);
+                    return INT;
+                }
+{DOUBLE}        {
+                    printf("#%-2d %-11s: %s\n", line_number, "data type", yytext);
+                    return DOUBLE;
+                }
+{CHAR}          {
+                    printf("#%-2d %-11s: %s\n", line_number, "data type", yytext);
+                    return CHAR;
                 }
 {RETURN}        {
                     printf("#%-2d return\n", line_number);
+                    return RETURN;
                 }
 
 {ID}            {
@@ -82,31 +161,39 @@ INT_VAL     ([0]|[1-9][0-9]*)
                 }
 \(          {
                 printf("#%-2d (\n", line_number);
+                return LP;
             }
 \)          {
                 printf("#%-2d )\n", line_number);
+                return RP;
             }
 \{          {
                 printf("#%-2d {\n", line_number);
+                return LLP;
             }
 \}          {
                 printf("#%-2d }\n", line_number);
+                return LRP;
             }
 ,           {
                 printf("#%-2d ,\n", line_number);
+                return COMMA;
             }
 '           {
                 printf("#%-2d '\n", line_number);
                 if (char_flag == 0) {
                     char_flag = 1;
                     char character = input();
+                    yylval.charVal = character;
                     printf("#%-2d %-11s: %c\n", line_number, "character", character);
+                    return CHARACTER;
                 } else {
                     char_flag = 0;
                 }
             }
 ;           {
                 printf("#%-2d ;\n", line_number);
+                return END;
             }
 
 "/*"        {
@@ -149,7 +236,9 @@ INT_VAL     ([0]|[1-9][0-9]*)
             }
 
 %%
+/*
 int main(){
 	yylex();
 	return 0;
 }
+*/

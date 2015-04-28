@@ -1,5 +1,5 @@
 LEX=flex
-YACC=bison
+YACC=byacc
 CC=gcc
 CFLAG=-ll
 SOURCE=101062124_hw2
@@ -20,4 +20,4 @@ bonus:
 	vimdiff output.txt result-bonus.txt
 
 clean:
-	rm lex.yy.c *.out output.txt
+	rm lex.yy.c *.out output.txt y.tab.*
