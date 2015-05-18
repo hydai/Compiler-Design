@@ -181,15 +181,12 @@ INT_VAL     ([0]|[1-9][0-9]*)
             }
 '           {
                 printf("#%-2d '\n", line_number);
-                if (char_flag == 0) {
-                    char_flag = 1;
-                    char character = input();
-                    yylval.charVal = character;
-                    printf("#%-2d %-11s: %c\n", line_number, "character", character);
-                    return CHARACTER;
-                } else {
-                    char_flag = 0;
-                }
+                char character = input();
+                yylval.charVal = character;
+                printf("#%-2d %-11s: %c\n", line_number, "character", character);
+                character = input();
+                printf("#%-2d '\n", line_number);
+                return CHARACTER;
             }
 ;           {
                 printf("#%-2d ;\n", line_number);

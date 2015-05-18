@@ -8,7 +8,7 @@ TESTCASE=testfile
 TESTCASEBONUS=bonus
 
 all:
-	${YACC} -d ${SOURCE}.y
+	${YACC} -dv ${SOURCE}.y
 	${LEX} ${SOURCE}.l
 	${CC} lex.yy.c y.tab.c ${CFLAG} -o ${TARGET}.out
 
@@ -20,4 +20,4 @@ bonus:
 	vimdiff output.txt result-bonus.txt
 
 clean:
-	rm lex.yy.c *.out output.txt y.tab.*
+	rm lex.yy.c *.out output.txt y.tab.* y.output
