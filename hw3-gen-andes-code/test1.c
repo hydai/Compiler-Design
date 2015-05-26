@@ -6,5 +6,5 @@ int main(){
     a = 10/2;
     c = (b+3)*4-5;
     //printf(“a is %d\n",a);
-    return 0
+    return 0;
 }
