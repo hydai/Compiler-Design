@@ -27,6 +27,7 @@ int insert_to_symbol_table(char* symbol_text, int symbol_type);
 void code_gen_with_header(FILE* fptr, char* file_name);
 void code_gen_function_header(FILE* fptr, char* file_name);
 void code_gen_function_body_end(FILE* fptr, char* file_name);
+void code_gen_with_end(FILE* fptr);
 int is_symbol_table_full();
 
 #endif

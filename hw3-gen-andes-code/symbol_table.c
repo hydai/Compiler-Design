@@ -91,4 +91,10 @@ void code_gen_function_body_end(FILE* fptr, char* func_name) {
     fprintf(fptr, "\taddi\t$sp,\t$fp,\t-8\n");
     fprintf(fptr, "\tpop.s\t{ $fp $lp }\n");
     fprintf(fptr, "\tret\n");
+    fprintf(fptr, "\t.size\t%s, .-%s\n", func_name, func_name);
+}
+
+
+void code_gen_with_end(FILE* fptr) {
+    fprintf(fptr, "\t.ident  \"GCC: (GNU) 4.9.0\"\n");
 }

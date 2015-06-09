@@ -7,6 +7,7 @@ extern FILE* fptr;
 extern void code_gen_with_header(FILE* fptr, char* file_name);
 extern void code_gen_function_header(FILE* fptr, char* file_name);
 extern void code_gen_function_body_end(FILE* fptr, char* file_name);
+extern void code_gen_with_end(FILE* fptr);
 %}
 
 %union {
@@ -232,6 +233,7 @@ int main() {
     fptr = fopen("andes.s", "w");
     code_gen_with_header(fptr, "testfile");
     yyparse();
+    code_gen_with_end(fptr);
     fclose(fptr);
     return 0;
 }
