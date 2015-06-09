@@ -1,6 +1,7 @@
 %{
 #include <stdio.h>
 #include "y.tab.h"
+extern int line_number;
 %}
 
 %union {
@@ -201,7 +202,7 @@ name: STRING {
 %%
 
 int yyerror(char *s) {
-    fprintf(stderr, "%s\n", s);
+    fprintf(stderr, "ERROR in line #%d: %s\n", line_number, s);
     return 0;
 }
 

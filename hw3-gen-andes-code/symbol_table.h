@@ -3,8 +3,10 @@
 const int TYPE_STRING = 0;
 const int TYPE_NUMBER = TYPE_STRING + 1;
 
+extern entry entry_table[128];
+extern int entry_table_index;
 extern symbol symbol_table[128];
-extern int symbol_table_index = 0;
+extern int symbol_table_index;
 
 /*************************Utils*************************/
 /*  char* create_new_string(char* source)

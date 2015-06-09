@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "symbol_table.h"
-struct symbol{
+struct symbol {
     char* text;
     int type;
     union {
@@ -13,6 +13,21 @@ struct symbol{
 };
 struct symbol symbol_table[128];
 int symbol_table_index = 0;
+
+struct entry {
+    char* name;
+    int scope;
+    int offset;
+    int id;
+    int variant;
+    int type;
+    int args_count;
+    int vars_count;
+    int mode;
+};
+struct entry entry_table[128];
+int entry_table_index = 0;
+
 char* create_new_string(char* source) {
     char* ret = NULL;
     ret = (char*)malloc(sizeof(char)*(strlen(source)+1));

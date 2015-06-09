@@ -199,7 +199,7 @@ INT_VAL     ([0]|[1-9][0-9]*)
 
 int yywrap() {
     int i;
-    printf("Total lines: %d\n", line_number);
+    printf("\nTotal lines: %d\n", line_number-1);
     printf("YYTEXT\t\tVALUE\n");
     printf("---------------------------\n");
     for (i = 0; i < symbol_table_index; i++) {
