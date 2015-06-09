@@ -1,17 +1,10 @@
 #ifdef SYMBOL_TABLE_H
 #define SYMBOL_TABLE_H
-const int SYMBOL_TABLE_SIZE = 128;
-typedef struct {
-    char* text;
-    int token;
-    union {
-        int int_val;
-        char* str_val;
-    } attr;
-} symbol;
+const int TYPE_STRING = 0;
+const int TYPE_NUMBER = TYPE_STRING + 1;
 
-symbol symbol_table[SYMBOL_TABLE_SIZE];
-int symbol_table_index = 0;
+extern symbol symbol_table[128];
+extern int symbol_table_index = 0;
 
 /*************************Utils*************************/
 /*  char* create_new_string(char* source)
@@ -30,5 +23,6 @@ char* create_new_string(char* source);
 */
 int insert_to_symbol_table(char* symbol_text, int symbol_type);
 void code_gen_with_header(FILE* fptr, char* file_name);
+int is_symbol_table_full();
 
 #endif

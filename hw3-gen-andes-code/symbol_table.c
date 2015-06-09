@@ -1,6 +1,18 @@
-#include "symbol_table.h"
+#include "y.tab.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "symbol_table.h"
+struct symbol{
+    char* text;
+    int type;
+    union {
+        int int_val;
+        char* str_val;
+    } attr;
+};
+struct symbol symbol_table[128];
+int symbol_table_index = 0;
 char* create_new_string(char* source) {
     char* ret = NULL;
     ret = (char*)malloc(sizeof(char)*(strlen(source)+1));
@@ -8,6 +20,13 @@ char* create_new_string(char* source) {
     return ret;
 }
 
+int is_symbol_table_full() {
+    if (symbol_table_index >= 128) {
+        return 0;
+    } else {
+        return 1;
+    }
+}
 
 int insert_to_symbol_table(char* symbol_text, int symbol_type) {
     if (is_symbol_table_full()) {
@@ -17,10 +36,10 @@ int insert_to_symbol_table(char* symbol_text, int symbol_type) {
 
     symbol_table[symbol_table_index].text = create_new_string(symbol_text);
     symbol_table[symbol_table_index].type = symbol_type;
-    if (symbol_type == IDENTIFIER) {
+    if (symbol_type == STRING) {
         // String
         symbol_table[symbol_table_index].attr.str_val = create_new_string(symbol_text);
-    } else if (symbol_type == INTEGER) {
+    } else if (symbol_type == NUMBER) {
         // Integer
         symbol_table[symbol_table_index].attr.int_val = atoi(symbol_text);
     } else {
