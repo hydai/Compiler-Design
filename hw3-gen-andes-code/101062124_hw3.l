@@ -20,7 +20,7 @@ extern struct symbol symbol_table[128];
 extern int symbol_table_index;
 int line_number = 1;
 // File pointer for generating asm
-FILE *fptr_asm = NULL;
+FILE *fptr = NULL;
 %}
 
 

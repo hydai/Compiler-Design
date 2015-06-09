@@ -1,7 +1,12 @@
 %{
 #include <stdio.h>
+#include "symbol_table.h"
 #include "y.tab.h"
 extern int line_number;
+extern FILE* fptr;
+extern void code_gen_with_header(FILE* fptr, char* file_name);
+extern void code_gen_function_header(FILE* fptr, char* file_name);
+extern void code_gen_function_body_end(FILE* fptr, char* file_name);
 %}
 
 %union {
@@ -18,6 +23,9 @@ extern int line_number;
 %token INT
 %token <strVal> STRING
 
+%type <intVal> value
+%type <strVal> function_name name
+
 %left ADD MINUS
 %left MULTIPLY DIVIDE
 %start program
@@ -31,17 +39,27 @@ program: program function {
     | /* NULL */
     ;
 
-function: type name LP param_dec RP END {
+function: type function_name LP param_dec RP END {
+            code_gen_function_body_end(fptr, $2);
             if (DEBUG_YACC) {
                 printf("type name ( param_dec ); -> function\n");
             }
         }
-        | type name LP param_dec RP LLP content LRP {
+        | type function_name LP param_dec RP LLP content LRP {
+            code_gen_function_body_end(fptr, $2);
             if (DEBUG_YACC) {
                 printf("type name ( param_dec ) { content } -> function\n");
             }
         }
         ;
+
+function_name: STRING {
+                if (DEBUG_YACC) {
+                    printf("STRING -> funciton_name\n");
+                }
+                code_gen_function_header(fptr, $1);
+                $$ = $1;
+             }
 
 param_dec: param_dec COMMA type name {
             if (DEBUG_YACC) {
@@ -190,6 +208,9 @@ value: NUMBER {
         if (DEBUG_YACC) {
             printf("NUMBER -> value\n");
         }
+        fprintf(fptr, "\tmovi\t$r0,\t%d\n", $1);
+        fprintf(fptr, "\tswi\t\t$r0,\t[$fp+(-12)]\n");
+        $$ = $1;
      }
      ;
 
@@ -197,6 +218,7 @@ name: STRING {
         if (DEBUG_YACC) {
             printf("STRING -> name\n");
         }
+        $$ = $1;
     }
     ;
 %%
@@ -207,6 +229,9 @@ int yyerror(char *s) {
 }
 
 int main() {
+    fptr = fopen("andes.s", "w");
+    code_gen_with_header(fptr, "testfile");
     yyparse();
+    fclose(fptr);
     return 0;
 }

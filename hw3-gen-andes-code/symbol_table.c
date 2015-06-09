@@ -69,11 +69,26 @@ int insert_to_symbol_table(char* symbol_text, int symbol_type) {
 
 
 void code_gen_with_header(FILE* fptr, char* file_name) {
-    fprintf(fptr, "    .file 1 \"%s\"\n", file_name);
-    fprintf(fptr, "    .section    .mdebug.abi_nds32\n");
-    fprintf(fptr, "    .previous\n");
-    fprintf(fptr, "    .text\n");
-    fprintf(fptr, "    .align 2\n");
-    fprintf(fptr, "    .globl main\n");
-    fprintf(fptr, "    .type main, @function\n");
+    fprintf(fptr, "\t.file\t\"%s\"\n", file_name);
+    fprintf(fptr, "\t.section\t.mdebug.abi_nds32\n");
+    fprintf(fptr, "\t.previous\n");
+}
+
+
+void code_gen_function_header(FILE* fptr, char* func_name) {
+    fprintf(fptr, "\t.text\n");
+    fprintf(fptr, "\t.align\t2\n");
+    fprintf(fptr, "\t.global\t%s\n", func_name);
+    fprintf(fptr, "\t.type\t%s, @function\n", func_name);
+    fprintf(fptr, "%s:\n", func_name);
+    fprintf(fptr, "\tpush.s\t{ $fp $lp }\n");
+    fprintf(fptr, "\taddi\t$fp,\t$sp,\t8\n");
+    fprintf(fptr, "\taddi\t$sp,\t$sp,\t-16\n");
+}
+
+
+void code_gen_function_body_end(FILE* fptr, char* func_name) {
+    fprintf(fptr, "\taddi\t$sp,\t$fp,\t-8\n");
+    fprintf(fptr, "\tpop.s\t{ $fp $lp }\n");
+    fprintf(fptr, "\tret\n");
 }
