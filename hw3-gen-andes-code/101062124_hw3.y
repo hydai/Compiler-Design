@@ -256,7 +256,7 @@ arg_list: arg_list COMMA name {
 
 expr: expr ADD expr {
         if (isFirstScan == 0) {
-            fprintf(fptr, "\taddi\t$r0,\t%d\n", $3);
+            fprintf(fptr, "\tadd \t$r0,\t$r0,\t$r1\n");
         }
         if (DEBUG_YACC) {
             printf("expr + expr -> expr\n");
@@ -264,7 +264,7 @@ expr: expr ADD expr {
     }
     | expr MINUS expr {
         if (isFirstScan == 0) {
-            fprintf(fptr, "\tsubi\t$r0,\t%d\n", $3);
+            fprintf(fptr, "\tsub \t$r0,\t$r0,\t$r1\n");
         }
         if (DEBUG_YACC) {
             printf("expr - expr -> expr\n");
@@ -272,7 +272,8 @@ expr: expr ADD expr {
     }
     | expr MULTIPLY expr {
         if (isFirstScan == 0) {
-            fprintf(fptr, "\tslli\t$r0,\t$r0,\t%d\n", (int)log2($3));
+            fprintf(fptr, "\tmovi\t$r1,\t%d\n", (int)log2($3));
+            fprintf(fptr, "\tsll \t$r0,\t$r0,\t$r1\n");
         }
         if (DEBUG_YACC) {
             printf("expr * expr -> expr\n");
@@ -280,7 +281,8 @@ expr: expr ADD expr {
     }
     | expr DIVIDE expr {
         if (isFirstScan == 0) {
-            fprintf(fptr, "\tsrli\t$r0,\t$r0,\t%d\n", (int)log2($3));
+            fprintf(fptr, "\tmovi\t$r1,\t%d\n", (int)log2($3));
+            fprintf(fptr, "\tsrl \t$r0,\t$r0,\t$r1\n");
         }
         if (DEBUG_YACC) {
             printf("expr / expr -> expr\n");
@@ -297,6 +299,8 @@ expr: expr ADD expr {
             if (expr_mode == 0) {
                 fprintf(fptr, "\tmovi\t$r0,\t%d\n", $1);
                 expr_mode = 1;
+            } else {
+                fprintf(fptr, "\tmovi\t$r1,\t%d\n", $1);
             }
         }
         if (DEBUG_YACC) {
@@ -309,6 +313,8 @@ expr: expr ADD expr {
             if (expr_mode == 0) {
                 fprintf(fptr, "\tlwi \t$r0,\t[$fp + (-%d)]\n", symbol_table[get_symbol_table_index($1)].offset*4+4);
                 expr_mode = 1;
+            } else {
+                fprintf(fptr, "\tlwi \t$r1,\t[$fp + (-%d)]\n", symbol_table[get_symbol_table_index($1)].offset*4+4);
             }
         }
         if (DEBUG_YACC) {
