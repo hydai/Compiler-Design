@@ -41,6 +41,7 @@ int isFirstScan = 1;
 int args_count = 0;
 int vars_count = 0;
 int vars_offset = 2;
+int args_call_count = 0;
 int expr_mode = 0;
 %}
 
@@ -199,6 +200,7 @@ statement: RETURN expr {
             }
          }
          | name ASSIGN function_call {
+         
             if (DEBUG_YACC) {
                 printf("name = function_call -> statement\n");
             }
@@ -226,27 +228,43 @@ statement: RETURN expr {
          ;
 
 function_call: name LP arg_list RP {
+                args_call_count = 0;
+                if (isFirstScan == 0) {
+                    fprintf(fptr, "\tjal \t%s\n", $1);
+                }
                 if (DEBUG_YACC) {
                     printf("name ( arg_list ) -> function_call\n");
                 }
              };
 
 arg_list: arg_list COMMA name {
+            if (isFirstScan == 0) {
+                fprintf(fptr, "\tlwi \t$r%d,\t[$fp + (-%d)]\n", args_call_count++, symbol_table[get_symbol_table_index($3)].offset*4+4);
+            }
             if (DEBUG_YACC) {
                 printf("arg_list, name -> arg_list\n");
             }
         }
         | arg_list COMMA value {
+            if (isFirstScan == 0) {
+                fprintf(fptr, "\tmovi\t$r%d,\t%d\n", args_call_count++, $3);
+            }
             if (DEBUG_YACC) {
                 printf("arg_list, value -> arg_list\n");
             }
         }
         | name {
+            if (isFirstScan == 0) {
+                fprintf(fptr, "\tlwi \t$r%d,\t[$fp + (-%d)]\n", args_call_count++, symbol_table[get_symbol_table_index($1)].offset*4+4);
+            }
             if (DEBUG_YACC) {
                 printf("name -> arg_list\n");
             }
         }
         | value {
+            if (isFirstScan == 0) {
+                fprintf(fptr, "\tmovi\t$r%d,\t%d\n", args_call_count++, $1);
+            }
             if (DEBUG_YACC) {
                 printf("value -> arg_list\n");
             }
