@@ -201,10 +201,12 @@ INT_VAL     ([0]|[1-9][0-9]*)
 int yywrap() {
     int i;
     printf("\nTotal lines: %d\n", line_number-1);
-    printf("YYTEXT\t\tVALUE\n");
+    printf("YYTEXT\t\tOFFSET\n");
     printf("---------------------------\n");
     for (i = 0; i < symbol_table_index; i++) {
         printf("%s\t\t", symbol_table[i].text);
+        printf("%d\n", symbol_table[i].offset);
+        /*
         if (symbol_table[i].type == STRING) {
             printf("%s\n", symbol_table[i].attr.str_val);
         } else if (symbol_table[i].type == NUMBER) {
@@ -212,6 +214,7 @@ int yywrap() {
         } else {
             printf("%s\n", symbol_table[i].attr.str_val);
         }
+        */
     }
     return 1;
 }
