@@ -18,5 +18,10 @@ test:
 	${LEX} ${SOURCE}.l
 	${CC} lex.yy.c y.tab.c ${MYLIB}.c ${CFLAG} -o ${TARGET}.out -D DEBUG_LEX=1 -D DEBUG_YACC=1
 
+debug:
+	${YACC} -dv ${SOURCE}.y
+	${LEX} ${SOURCE}.l
+	${CC} lex.yy.c y.tab.c ${MYLIB}.c ${CFLAG} -o ${TARGET}.out -D DEBUG_LEX=0 -D DEBUG_YACC=0 -g
+
 clean:
-	rm lex.yy.c *.out output.txt y.tab.* y.output
+	rm lex.yy.c *.out y.tab.* y.output

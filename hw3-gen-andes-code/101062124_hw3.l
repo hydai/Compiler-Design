@@ -10,6 +10,7 @@
 struct symbol{
     char* text;
     int type;
+    int offset;
     union {
         int int_val;
         char* str_val;

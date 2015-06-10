@@ -1,13 +1,47 @@
 %{
 #include <stdio.h>
+#include <math.h>
 #include "symbol_table.h"
 #include "y.tab.h"
+struct symbol {
+    char* text;
+    int type;
+    int offset;
+    union {
+        int int_val;
+        char* str_val;
+    } attr;
+};
+struct entry {
+    char* name;
+    int scope;
+    int offset;
+    int id;
+    int variant;
+    int type;
+    int args_count;
+    int vars_count;
+    int mode;
+};
 extern int line_number;
 extern FILE* fptr;
+extern char* create_new_string(char*);
+extern int insert_to_symbol_table(char* symbol_text, int symbol_type, int offset);
 extern void code_gen_with_header(FILE* fptr, char* file_name);
 extern void code_gen_function_header(FILE* fptr, char* file_name);
 extern void code_gen_function_body_end(FILE* fptr, char* file_name);
 extern void code_gen_with_end(FILE* fptr);
+extern int get_entry_table_index(char* name);
+extern int get_symbol_table_index(char* name);
+extern struct entry entry_table[128];
+extern int entry_table_index;
+extern struct symbol symbol_table[128];
+extern int symbol_table_index;
+int isFirstScan = 1;
+int args_count = 0;
+int vars_count = 0;
+int vars_offset = 2;
+int expr_mode = 0;
 %}
 
 %union {
@@ -24,7 +58,7 @@ extern void code_gen_with_end(FILE* fptr);
 %token INT
 %token <strVal> STRING
 
-%type <intVal> value
+%type <intVal> value expr
 %type <strVal> function_name name
 
 %left ADD MINUS
@@ -41,13 +75,40 @@ program: program function {
     ;
 
 function: type function_name LP param_dec RP END {
-            code_gen_function_body_end(fptr, $2);
+            if (isFirstScan == 0) {
+                code_gen_function_body_end(fptr, $2);
+                vars_offset = 2;
+            } else {
+                int index = get_entry_table_index($2);
+                if (index == -1) {
+                    entry_table[entry_table_index].name = create_new_string($2);
+                    entry_table[entry_table_index].args_count = args_count;
+                    args_count = 0;
+                    entry_table[entry_table_index].vars_count = vars_count;
+                    vars_count = 0;
+                } else {
+                    exit(1);
+                }
+            }
             if (DEBUG_YACC) {
                 printf("type name ( param_dec ); -> function\n");
             }
         }
         | type function_name LP param_dec RP LLP content LRP {
-            code_gen_function_body_end(fptr, $2);
+            if (isFirstScan == 0) {
+                code_gen_function_body_end(fptr, $2);
+                vars_offset = 2;
+            } else {
+                int index = get_entry_table_index($2);
+                if (index == -1) {
+                    entry_table[entry_table_index].name = create_new_string($2);
+                    index = entry_table_index++;
+                }
+                entry_table[index].args_count = args_count;
+                args_count = 0;
+                entry_table[index].vars_count = vars_count;
+                vars_count = 0;
+            }
             if (DEBUG_YACC) {
                 printf("type name ( param_dec ) { content } -> function\n");
             }
@@ -58,16 +119,24 @@ function_name: STRING {
                 if (DEBUG_YACC) {
                     printf("STRING -> funciton_name\n");
                 }
-                code_gen_function_header(fptr, $1);
+                if (isFirstScan == 0) {
+                    code_gen_function_header(fptr, $1);
+                }
                 $$ = $1;
              }
 
 param_dec: param_dec COMMA type name {
+            if (isFirstScan) {
+                args_count++;
+            }
             if (DEBUG_YACC) {
                 printf("param_dec, type name -> param_dec\n");
             }
          }
          | type name {
+            if (isFirstScan) {
+                args_count++;
+            }
             if (DEBUG_YACC) {
                 printf("type name -> param_dec\n");
             }
@@ -89,16 +158,34 @@ content: content var_dec END {
        ;
 
 var_dec: var_dec COMMA name ASSIGN expr {
+            expr_mode = 0;
+            if (isFirstScan) {
+                vars_count++;
+                insert_to_symbol_table($3, STRING, vars_offset++);
+            } else {
+                fprintf(fptr, "\tswi \t$r0,\t[$fp + (-%d)]\n", symbol_table[get_symbol_table_index($3)].offset*4+4);
+            }
             if (DEBUG_YACC) {
                 printf("var_dec, name = expr -> var_dec\n");
             }
        }
        | type name ASSIGN expr {
+            expr_mode = 0;
+            if (isFirstScan) {
+                vars_count++;
+                insert_to_symbol_table($2, STRING, vars_offset++);
+            } else {
+                fprintf(fptr, "\tswi \t$r0,\t[$fp + (-%d)]\n", symbol_table[get_symbol_table_index($2)].offset*4+4);
+            }
             if (DEBUG_YACC) {
                 printf("type name = expr -> var_dec\n");
             }
        }
        | type name {
+            if (isFirstScan) {
+                vars_count++;
+                insert_to_symbol_table($2, STRING, vars_offset++);
+            }
             if (DEBUG_YACC) {
                 printf("type name -> var_dec\n");
             }
@@ -106,21 +193,27 @@ var_dec: var_dec COMMA name ASSIGN expr {
        ;
 
 statement: RETURN expr {
+            expr_mode = 0;
             if (DEBUG_YACC) {
                 printf("return expr -> statement\n");
             }
          }
          | name ASSIGN function_call {
             if (DEBUG_YACC) {
-                printf("name = expr -> function_call\n");
+                printf("name = function_call -> statement\n");
             }
          }
          | name ASSIGN expr {
+            expr_mode = 0;
+            if (isFirstScan == 0) {
+                fprintf(fptr, "\tswi \t$r0,\t[$fp + (-%d)]\n", symbol_table[get_symbol_table_index($1)].offset*4+4);
+            }
             if (DEBUG_YACC) {
                 printf("name = expr -> statement\n");
             }
          }
          | expr {
+            expr_mode = 0;
             if (DEBUG_YACC) {
                 printf("expr -> statement\n");
             }
@@ -162,21 +255,33 @@ arg_list: arg_list COMMA name {
         ;
 
 expr: expr ADD expr {
+        if (isFirstScan == 0) {
+            fprintf(fptr, "\taddi\t$r0,\t%d\n", $3);
+        }
         if (DEBUG_YACC) {
             printf("expr + expr -> expr\n");
         }
     }
     | expr MINUS expr {
+        if (isFirstScan == 0) {
+            fprintf(fptr, "\tsubi\t$r0,\t%d\n", $3);
+        }
         if (DEBUG_YACC) {
             printf("expr - expr -> expr\n");
         }
     }
     | expr MULTIPLY expr {
+        if (isFirstScan == 0) {
+            fprintf(fptr, "\tslli\t$r0,\t$r0,\t%d\n", (int)log2($3));
+        }
         if (DEBUG_YACC) {
             printf("expr * expr -> expr\n");
         }
     }
     | expr DIVIDE expr {
+        if (isFirstScan == 0) {
+            fprintf(fptr, "\tsrli\t$r0,\t$r0,\t%d\n", (int)log2($3));
+        }
         if (DEBUG_YACC) {
             printf("expr / expr -> expr\n");
         }
@@ -185,16 +290,31 @@ expr: expr ADD expr {
         if (DEBUG_YACC) {
             printf("( expr ) -> expr\n");
         }
+        $$ = $2;
     }
     | value {
+        if (isFirstScan == 0) {
+            if (expr_mode == 0) {
+                fprintf(fptr, "\tmovi\t$r0,\t%d\n", $1);
+                expr_mode = 1;
+            }
+        }
         if (DEBUG_YACC) {
             printf("value -> expr\n");
         }
+        $$ = $1;
     }
     | name {
+        if (isFirstScan == 0) {
+            if (expr_mode == 0) {
+                fprintf(fptr, "\tlwi \t$r0,\t[$fp + (-%d)]\n", symbol_table[get_symbol_table_index($1)].offset*4+4);
+                expr_mode = 1;
+            }
+        }
         if (DEBUG_YACC) {
             printf("name -> expr\n");
         }
+        $$ = 0;
     }
     ;
 
@@ -209,8 +329,6 @@ value: NUMBER {
         if (DEBUG_YACC) {
             printf("NUMBER -> value\n");
         }
-        fprintf(fptr, "\tmovi\t$r0,\t%d\n", $1);
-        fprintf(fptr, "\tswi\t\t$r0,\t[$fp+(-12)]\n");
         $$ = $1;
      }
      ;
@@ -229,11 +347,28 @@ int yyerror(char *s) {
     return 0;
 }
 
-int main() {
-    fptr = fopen("andes.s", "w");
-    code_gen_with_header(fptr, "testfile");
-    yyparse();
-    code_gen_with_end(fptr);
-    fclose(fptr);
+void scan(char* filename, int isFirstScan) {
+    line_number = 1;
+    FILE *in = fopen(filename, "r");
+    yyrestart(in);
+    if (isFirstScan) {
+        yyparse();
+    } else {
+        fptr = fopen("andes.s", "w");
+        code_gen_with_header(fptr, filename);
+        yyparse();
+        code_gen_with_end(fptr);
+        fclose(fptr);
+    }
+    fclose(in);
+}
+
+int main(int argc, char *argv[]) {
+    // Scan first to get infomations
+    isFirstScan = 1;
+    scan(argv[1], isFirstScan);
+    // Re-scan to generate file
+    isFirstScan = 0;
+    scan(argv[1], isFirstScan);
     return 0;
 }
