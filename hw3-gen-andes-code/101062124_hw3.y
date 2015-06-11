@@ -223,7 +223,9 @@ statement: RETURN expr {
             }
          }
          | name ASSIGN function_call {
-         
+            if (isFirstScan == 0) {
+                fprintf(fptr, "\tswi \t$r0,\t[$fp + (-%d)]\n", symbol_table[get_symbol_table_index($1)].offset*4+4);
+            }
             if (DEBUG_YACC) {
                 printf("name = function_call -> statement\n");
             }
