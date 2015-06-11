@@ -41,7 +41,9 @@ int isFirstScan = 1;
 int args_count = 0;
 int vars_count = 0;
 int vars_offset = 2;
+int args_dec_count = 0;
 int args_call_count = 0;
+int current_index = 0;
 int expr_mode = 0;
 %}
 
@@ -79,6 +81,7 @@ function: type function_name LP param_dec RP END {
             if (isFirstScan == 0) {
                 code_gen_function_body_end(fptr, $2);
                 vars_offset = 2;
+                current_index++;
             } else {
                 int index = get_entry_table_index($2);
                 if (index == -1) {
@@ -99,6 +102,8 @@ function: type function_name LP param_dec RP END {
             if (isFirstScan == 0) {
                 code_gen_function_body_end(fptr, $2);
                 vars_offset = 2;
+                args_dec_count = 0;
+                current_index++;
             } else {
                 int index = get_entry_table_index($2);
                 if (index == -1) {
@@ -129,6 +134,15 @@ function_name: STRING {
 param_dec: param_dec COMMA type name {
             if (isFirstScan) {
                 args_count++;
+                vars_count++;
+                insert_to_symbol_table($4, STRING, 0);
+            } else {
+                if (symbol_table[get_symbol_table_index($4)].offset == 0) {
+                    symbol_table[get_symbol_table_index($4)].offset = args_dec_count + entry_table[current_index].vars_count;
+                    args_dec_count++;
+                }
+                int tmp_offset = symbol_table[get_symbol_table_index($4)].offset;
+                fprintf(fptr, "\tswi \t$r%d,\t[$fp + (-%d)]\n", tmp_offset-entry_table[current_index].vars_count, tmp_offset*4+4);
             }
             if (DEBUG_YACC) {
                 printf("param_dec, type name -> param_dec\n");
@@ -137,6 +151,15 @@ param_dec: param_dec COMMA type name {
          | type name {
             if (isFirstScan) {
                 args_count++;
+                vars_count++;
+                insert_to_symbol_table($2, STRING, 0);
+            } else {
+                if (symbol_table[get_symbol_table_index($2)].offset == 0) {
+                    symbol_table[get_symbol_table_index($2)].offset = args_dec_count + entry_table[current_index].vars_count;
+                    args_dec_count++;
+                }
+                int tmp_offset = symbol_table[get_symbol_table_index($2)].offset;
+                fprintf(fptr, "\tswi \t$r%d,\t[$fp + (-%d)]\n", tmp_offset-entry_table[current_index].vars_count, tmp_offset*4+4);
             }
             if (DEBUG_YACC) {
                 printf("type name -> param_dec\n");
