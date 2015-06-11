@@ -1,5 +1,6 @@
 %{
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 #include "symbol_table.h"
 #include "y.tab.h"
@@ -413,6 +414,10 @@ void scan(char* filename, int isFirstScan) {
 }
 
 int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "usage: %s <file>\nex: %s test1.c\n", argv[0], argv[0]);
+        exit(1);
+    }
     // Scan first to get infomations
     isFirstScan = 1;
     scan(argv[1], isFirstScan);
