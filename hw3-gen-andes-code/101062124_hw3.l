@@ -19,6 +19,7 @@ struct symbol{
 
 extern struct symbol symbol_table[128];
 extern int symbol_table_index;
+extern int isFirstScan;
 int line_number = 1;
 // File pointer for generating asm
 FILE *fptr = NULL;
@@ -201,6 +202,7 @@ INT_VAL     ([0]|[1-9][0-9]*)
 %%
 
 int yywrap() {
+    if (isFirstScan) return 1;
     int i;
     printf("\nTotal lines: %d\n", line_number-1);
     printf("YYTEXT\t\tOFFSET\n");

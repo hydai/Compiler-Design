@@ -80,9 +80,9 @@ program: program function {
 function: type function_name LP param_dec RP END {
             if (isFirstScan == 0) {
                 code_gen_function_body_end(fptr, $2);
-                vars_offset = 2;
                 current_index++;
             } else {
+                vars_offset = 2;
                 int index = get_entry_table_index($2);
                 if (index == -1) {
                     entry_table[entry_table_index].name = create_new_string($2);
@@ -101,10 +101,10 @@ function: type function_name LP param_dec RP END {
         | type function_name LP param_dec RP LLP content LRP {
             if (isFirstScan == 0) {
                 code_gen_function_body_end(fptr, $2);
-                vars_offset = 2;
                 args_dec_count = 0;
                 current_index++;
             } else {
+                vars_offset = 2;
                 int index = get_entry_table_index($2);
                 if (index == -1) {
                     entry_table[entry_table_index].name = create_new_string($2);
@@ -418,6 +418,7 @@ int main(int argc, char *argv[]) {
     scan(argv[1], isFirstScan);
     // Re-scan to generate file
     isFirstScan = 0;
+    vars_offset = 2;
     scan(argv[1], isFirstScan);
     return 0;
 }
