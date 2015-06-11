@@ -158,8 +158,9 @@ INT_VAL     ([0]|[1-9][0-9]*)
             break;
         if(cur_ch == '\n')
             if (DEBUG_LEX) {
-                printf("#%-2d comment\n", line_number++);
+                printf("#%-2d comment\n", line_number);
             }
+            line_number++;
         if(prev_ch == '*' && cur_ch == '/') {
             if (DEBUG_LEX) {
                 printf("#%-2d comment\n", line_number);
@@ -177,8 +178,9 @@ INT_VAL     ([0]|[1-9][0-9]*)
             break;
         if(cur_ch == '\n') {
             if (DEBUG_LEX) {
-                printf("#%-2d comment\n", line_number++);
+                printf("#%-2d comment\n", line_number);
             }
+            line_number++;
             break;
         }
         prev_ch = cur_ch;
